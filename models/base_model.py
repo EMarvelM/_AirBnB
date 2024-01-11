@@ -2,11 +2,19 @@ import uuid
 import datetime
 
 class BaseModel():
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.id = str(uuid.uuid4())
 
         self.created_at = datetime.datetime.now()
         self.updated_at = datetime.datetime.now()
+
+        if kwargs:
+            for key, value in kwargs.items():
+                if key == "__class__":
+                    continue
+                elif key == "created_at" or key == "updated_at":
+                    value = datetime.datetime.fromisoformat(value)
+                setattr(self, key, value)
 
     def __str__(self):
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
